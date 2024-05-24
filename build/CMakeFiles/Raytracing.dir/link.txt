@@ -1,0 +1,3 @@
+D:\vscode\CMake\bin\cmake.exe -E rm -f CMakeFiles\Raytracing.dir/objects.a
+D:\vscode\MinGW\mingw64\bin\ar.exe qc CMakeFiles\Raytracing.dir/objects.a @CMakeFiles\Raytracing.dir\objects1.rsp
+D:\vscode\MinGW\mingw64\bin\g++.exe -g -Wl,--stack,1073741824 -Wl,--whole-archive CMakeFiles\Raytracing.dir/objects.a -Wl,--no-whole-archive -o Raytracing.exe -Wl,--out-implib,libRaytracing.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Raytracing.dir\linkLibs.rsp

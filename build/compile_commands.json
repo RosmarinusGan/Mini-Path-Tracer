@@ -1,0 +1,32 @@
+[
+{
+  "directory": "D:/vscode/Vscode_Cpp/build",
+  "command": "D:\\vscode\\MinGW\\mingw64\\bin\\g++.exe  @CMakeFiles/Raytracing.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\Raytracing.dir\\src\\Acceleration\\BVH.cpp.obj -c D:\\vscode\\Vscode_Cpp\\src\\Acceleration\\BVH.cpp",
+  "file": "D:/vscode/Vscode_Cpp/src/Acceleration/BVH.cpp",
+  "output": "CMakeFiles/Raytracing.dir/src/Acceleration/BVH.cpp.obj"
+},
+{
+  "directory": "D:/vscode/Vscode_Cpp/build",
+  "command": "D:\\vscode\\MinGW\\mingw64\\bin\\g++.exe  @CMakeFiles/Raytracing.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\Raytracing.dir\\src\\Materials\\Texture.cpp.obj -c D:\\vscode\\Vscode_Cpp\\src\\Materials\\Texture.cpp",
+  "file": "D:/vscode/Vscode_Cpp/src/Materials/Texture.cpp",
+  "output": "CMakeFiles/Raytracing.dir/src/Materials/Texture.cpp.obj"
+},
+{
+  "directory": "D:/vscode/Vscode_Cpp/build",
+  "command": "D:\\vscode\\MinGW\\mingw64\\bin\\g++.exe  @CMakeFiles/Raytracing.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\Raytracing.dir\\src\\Renderer.cpp.obj -c D:\\vscode\\Vscode_Cpp\\src\\Renderer.cpp",
+  "file": "D:/vscode/Vscode_Cpp/src/Renderer.cpp",
+  "output": "CMakeFiles/Raytracing.dir/src/Renderer.cpp.obj"
+},
+{
+  "directory": "D:/vscode/Vscode_Cpp/build",
+  "command": "D:\\vscode\\MinGW\\mingw64\\bin\\g++.exe  @CMakeFiles/Raytracing.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\Raytracing.dir\\src\\Scene.cpp.obj -c D:\\vscode\\Vscode_Cpp\\src\\Scene.cpp",
+  "file": "D:/vscode/Vscode_Cpp/src/Scene.cpp",
+  "output": "CMakeFiles/Raytracing.dir/src/Scene.cpp.obj"
+},
+{
+  "directory": "D:/vscode/Vscode_Cpp/build",
+  "command": "D:\\vscode\\MinGW\\mingw64\\bin\\g++.exe  @CMakeFiles/Raytracing.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\Raytracing.dir\\src\\main.cpp.obj -c D:\\vscode\\Vscode_Cpp\\src\\main.cpp",
+  "file": "D:/vscode/Vscode_Cpp/src/main.cpp",
+  "output": "CMakeFiles/Raytracing.dir/src/main.cpp.obj"
+}
+]

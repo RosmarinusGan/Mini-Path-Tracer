@@ -1,0 +1,45 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "D:/vscode/Vscode_Cpp/cpp_lib/eigen-3.4.0",
+                "D:/vscode/Vscode_Cpp/cpp_lib/OpenCV/include",
+                "D:/vscode/Vscode_Cpp/cpp_lib/OpenCV/include/opencv2",
+                "${workspaceRoot}",
+                "D:/vscode/MinGW/mingw64/include/**",
+                "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++",
+                "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32",
+                "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/backward",
+                "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include",
+                "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed",
+                "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/../../../../x86_64-w64-mingw32/include",
+                "${workspaceRoot}/src/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "__GNUC__=6",
+                "__cdecl=__attribute__((__cdecl__))"
+            ],
+            "compilerPath": "D:/vscode/MinGW/mingw64/bin/g++.exe",
+            "intelliSenseMode": "${default}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "",
+                "path": [
+                    "${workspaceRoot}",
+                    "D:/vscode/MinGW/mingw64/include/**",
+                    "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++",
+                    "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32",
+                    "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/backward",
+                    "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include",
+                    "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed",
+                    "D:/vscode/MinGW/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/../../../../x86_64-w64-mingw32/include"
+                ]
+            }
+        }
+    ],
+    "version": 4
+}
