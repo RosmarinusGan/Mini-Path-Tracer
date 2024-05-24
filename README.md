@@ -1,31 +1,31 @@
 # Mini-Path-Tracer
 
--[x] Basic Ray Tracing
+- [x] Basic Ray Tracing
 
--[x] Backwards Path Tracing
+- [x] Backwards Path Tracing
 
--[x] Microfacet BRDF
+- [x] Microfacet BRDF
 
--[x] Texture Mapping
+- [x] Texture Mapping
 
--[x] Volumetric Scattering (For Isotropic medium)
+- [x] Volumetric Scattering (For Isotropic medium)
 
--[x] Importance Sampling
+- [x] Importance Sampling
 
--[x] BVH Tree
+- [x] BVH Tree
 
--[x] MSAA
+- [x] MSAA
 
--[x] Gamma Correction
+- [x] Gamma Correction
 
 **TODO**
 
--[ ] Bidirectional Path Tracing
+- [ ] Bidirectional Path Tracing
 
--[ ] Subsurface Scattering 
+- [ ] Subsurface Scattering 
 
--[ ] Multiple Importance Sampling
+- [ ] Multiple Importance Sampling
 
--[ ] SAH Tree
+- [ ] SAH Tree
 
--[ ] GUI
+- [ ] GUI
