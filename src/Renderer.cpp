@@ -24,14 +24,16 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 32; // 每个pixel路径数
+    int spp = 6; // 每个pixel路径数
     std::cout << "SPP: " << spp << "\n";
 
-    int thread_num = 12; // 线程数
+    int thread_num = 8; // 线程数
     int thread_height = scene.height / thread_num; // 每个线程处理的高度/行数
     std::vector<std::thread> threads(thread_num);
     std::mutex mtx;
     int progress = 0;
+
+    bool isBasic = false; // 是否使用whitted-style ray tracing
 
     // 使用lamdba表达式定义函数对象，描述每个线程的任务
     auto renderEachRow = [&](int thread_index){
@@ -46,8 +48,11 @@ void Renderer::Render(const Scene& scene)
 
                 Vector3f dir = Vector3f(-x, y, 1).normalized();
                 for (int k = 0; k < spp; k++){
-                    framebuffer[(int)(j * scene.width + i)] += scene.castRayPT(Ray(eye_pos, dir)) / spp; // path tracing
-                    //framebuffer[(int)(j * scene.width + i)] += scene.castRayBasic(Ray(eye_pos, dir)) / spp; // whitted-style tracing
+                    if(isBasic){
+                        framebuffer[(int)(j * scene.width + i)] += scene.castRayBasic(Ray(eye_pos, dir)) / spp; // whitted-style tracing
+                    }else{
+                        framebuffer[(int)(j * scene.width + i)] += scene.castRayPT(Ray(eye_pos, dir)) / spp; // path tracing
+                    }
                 }
 
                 // MSAA抗锯齿, 这样做图片中心会有一条黑线，原因？。可以采用get_random_float()的方法抗锯齿

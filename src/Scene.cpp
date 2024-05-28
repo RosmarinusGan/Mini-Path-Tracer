@@ -100,35 +100,62 @@ Vector3f Scene::castRayPT(const Ray &ray) const
         auto light_pos = lightPoint.coords; // 光源位置
         auto light_n = lightPoint.normal.normalized(); // 光源法线
         auto ws = (light_pos - pos).normalized(); // 指向光源方向
+
+        // 多重重要性采样，对brdf或phase function采样
+        Vector3f L_dir_frp = 0.f;
+        /* volumetric */
+        auto w_mis = hitMedium ? medium->pf->sample(wo, pos).normalized() : inter.m->sample(wo, n).normalized();  // 散射光方向 / 入射光方向
+        /* volumetric */
+        // 方向是否朝向光源
+        Intersection shadow_mis = Scene::intersect(Ray(pos_deviation, w_mis));
+        bool mis_IsHitLight = shadow_mis.happened && shadow_mis.m->hasEmission();
+        float frpPdf = hitMedium ? medium->pf->pdf(w_mis, wo) : inter.m->pdf(w_mis, wo, n);
+        if(mis_IsHitLight){
+            if(!hitMedium){
+                auto fr = inter.m->eval(w_mis, wo, n, inter.tcoords);
+                auto costheta = dotProduct(w_mis, n);
+                L_dir_frp = shadow_mis.emit * fr * costheta / frpPdf;
+            }else{
+                auto fp = medium->pf->eval(w_mis, wo);
+                L_dir_frp = shadow_mis.emit * fp / frpPdf;
+            }
+        }
         
+        Vector3f L_dir_light = 0.f;
         // 判断是否遮挡
         Ray shade_to_light(pos_deviation, ws);
         //Ray shade_to_light(pos, ws);
         Intersection shadowInter = Scene::intersect(shade_to_light);
         auto dis_shadeToLight = (light_pos - pos).norm();
         auto dis_shadeToLight2 = dotProduct((light_pos - pos), (light_pos - pos));
+        auto costheta_prime = dotProduct(-ws, light_n);
 
-        
         // 光线一定会打到光源点上，除非被遮挡
         // 这里的判断精度不能太高，否则会出现奇怪的阴影
         if(shadowInter.happened && fabs(shadowInter.distance - dis_shadeToLight) < 0.01){
             // 计算直接光照
             auto Li = lightPoint.emit;
-            auto costheta_prime = dotProduct(-ws, light_n);
             /* volumetric */
             if(!hitMedium){
                 auto fr = inter.m->eval(ws, wo, n, inter.tcoords);
                 auto costheta = dotProduct(ws, n);
-                L_dir = Li * fr * costheta * costheta_prime / (dis_shadeToLight2 * lightPdf);
+                L_dir_light = Li * fr * costheta * costheta_prime / (dis_shadeToLight2 * lightPdf);
             }else{
                 auto fp = medium->pf->eval(ws, wo);
-                L_dir = Li * fp * costheta_prime / (dis_shadeToLight2 * lightPdf);
+                L_dir_light = Li * fp * costheta_prime / (dis_shadeToLight2 * lightPdf);
             }
             /* volumetric */
         }
 
+        float lightPdf_mis = dis_shadeToLight2 * lightPdf / costheta_prime;
+        // beta = 2
+        float omega_frp = frpPdf * frpPdf / (frpPdf * frpPdf + lightPdf_mis * lightPdf_mis);
+        float omega_light = lightPdf_mis * lightPdf_mis / (frpPdf * frpPdf + lightPdf_mis * lightPdf_mis);
+        L_dir = L_dir_frp * omega_frp + L_dir_light * omega_light;
+        //L_dir = L_dir_light;
+
         /* volumetric */
-        //L_dir = medium->Tr(dis_shadeToLight) * L_dir; // 这段要不要乘上Tr？
+        //L_dir = medium->Tr(dis_shadeToLight) * L_dir; // 这段要不要乘上Tr？似乎不用，因为最后结果乘了coeff
         /* volumetric */
     };
 
@@ -153,10 +180,10 @@ Vector3f Scene::castRayPT(const Ray &ray) const
     // 间接光照
     Vector3f L_indir = 0.f;
     float ksi = get_random_float();
-    //ksi = 1.f;
+    //ksi = 1.f; //只算直接光照
     if(ksi < RussianRoulette){
         /* volumetric */
-        auto wi = hitMedium ? medium->pf->sample(wo, pos) : inter.m->sample(wo, n).normalized();  // 散射光方向 / 入射光方向
+        auto wi = hitMedium ? medium->pf->sample(wo, pos).normalized() : inter.m->sample(wo, n).normalized();  // 散射光方向 / 入射光方向
         /* volumetric */
         // auto wi = normalize(input_pos - pos); // 这样计算是错误的，原因:sample得到的就是方向（从着色点出发），不是位置（不是从原点出发）
 
@@ -256,13 +283,14 @@ Vector3f Scene::castRayPT(const Ray &ray) const
                 auto light_I = light_point.emit;
                 auto dis_shadeToLight = (light_pos - pos).norm();
                 auto dis_shadeToLight2 = dotProduct(dis_shadeToLight, dis_shadeToLight);
+                int amplitude = 10000;
                 Intersection shadowInter = Scene::intersect(Ray(pos_deviation, light_dir));
                 if(shadowInter.happened && fabs(shadowInter.distance - dis_shadeToLight) < 0.01){
                     Vector3f Ld = inter.m->getColorAt(inter.tcoords.x, inter.tcoords.y) * light_I * std::max(0.f, dotProduct(n, light_dir)) / dis_shadeToLight2;
                     Vector3f half = (light_dir + wo).normalized();
                     Vector3f Ls = inter.m->Ks * light_I * std::pow(std::max(0.f, dotProduct(half, n)), inter.m->specularExponent) / dis_shadeToLight2;
                     //hitColor += Ld + Ls + La;
-                    hitColor += Ld + Ls;
+                    hitColor += (Ld + Ls) * amplitude;
                 }
             }
         }

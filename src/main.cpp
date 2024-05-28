@@ -62,7 +62,6 @@ int main(int argc, char** argv)
 
     // only for Whitted-Sytle
     std::unique_ptr<Material> transparent = std::make_unique<Transparent>(10.f, Vector3f(0.7937, 0.7937, 0.7937)); // ior 不能等于1,否则进入死循环运算
-    std::unique_ptr<Material> light_strong = std::make_unique<Diffuse>(Vector3f(0.65f), 10.f * (3600.f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 6400.f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 7600.f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
 
     MeshTriangle floor("../models/cornellbox/floor.obj", white.get());
     MeshTriangle shortbox("../models/cornellbox/shortbox.obj", diffuse.get());
@@ -74,7 +73,6 @@ int main(int argc, char** argv)
     MeshTriangle right("../models/cornellbox/right.obj", green.get());
 
     MeshTriangle light_("../models/cornellbox/light.obj", light.get());
-    //MeshTriangle light_("../models/cornellbox/light.obj", light_strong.get());
 
     MeshTriangle bunny("../models/bunny/bunny.obj", mirror.get(), Vector3f(130, -60, 150), 
         Vector3f(1500, 1500, 1500), Vector3f(-1, 0, 0), Vector3f(0, 1, 0), Vector3f(0, 0, -1));
@@ -82,15 +80,14 @@ int main(int argc, char** argv)
         Vector3f(55, 55, 55));
     MeshTriangle sphere1("../models/sphere.obj", white.get(), Vector3f(130, 100, 100), Vector3f(80.f));
 
-    MeshTriangle sphere2("../models/sphere.obj", mirror.get(), Vector3f(380, 100, 350), Vector3f(80.f));
-    //MeshTriangle sphere2("../models/sphere.obj", transparent.get(), Vector3f(380, 100, 350), Vector3f(80.f));
+    //MeshTriangle sphere2("../models/sphere.obj", mirror.get(), Vector3f(380, 100, 350), Vector3f(80.f));
+    MeshTriangle sphere2("../models/sphere.obj", transparent.get(), Vector3f(380, 100, 350), Vector3f(80.f));
 
     MeshTriangle cow("../models/spot/spot_triangulated_good.obj", diffuse_cow.get(), Vector3f(300, 250, 200), Vector3f(50.f));
     MeshTriangle rock("../models/rock/rock.obj", diffuse_cow.get(), Vector3f(300, 250, 200), Vector3f(50.f));
     MeshTriangle crate("../models/Crate/Crate1.obj", diffuse_cow.get(), Vector3f(300, 300, 50), Vector3f(70.f));
 
     MeshTriangle sphereLight("../models/sphere.obj", light.get(), Vector3f(300.f, 200.f, -800.f), Vector3f(10.f));
-    //MeshTriangle sphereLight("../models/sphere.obj", light_strong.get(), Vector3f(300.f, 200.f, -800.f), Vector3f(10.f));
 
     scene.Add(&floor);
     scene.Add(&shortbox);

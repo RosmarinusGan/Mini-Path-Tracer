@@ -42,6 +42,7 @@ Vector3f Diffuse::sample(const Vector3f &wo, const Vector3f &N){
     // 投影至半球上
     float z = std::sqrt(std::max(0.f, 1 - point.x * point.x - point.y * point.y));
     return toWorld(Vector3f(point.x, point.y, z), N);
+    
 }
 
 float Diffuse::pdf(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
