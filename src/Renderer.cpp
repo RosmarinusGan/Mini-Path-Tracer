@@ -24,7 +24,7 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 6; // 每个pixel路径数
+    int spp = 256; // 每个pixel路径数
     std::cout << "SPP: " << spp << "\n";
 
     int thread_num = 8; // 线程数
@@ -42,31 +42,37 @@ void Renderer::Render(const Scene& scene)
         for (uint32_t j = start; j < end; ++j) {
             for (uint32_t i = 0; i < scene.width; ++i) {
                 // generate primary ray direction
-                float x = (2 * (i + get_random_float()) / (float)scene.width - 1) *
-                        imageAspectRatio * scale;
-                float y = (1 - 2 * (j + get_random_float()) / (float)scene.height) * scale;
+                // float x = (2 * (i + get_random_float()) / (float)scene.width - 1) *
+                //         imageAspectRatio * scale;
+                // float y = (1 - 2 * (j + get_random_float()) / (float)scene.height) * scale;
 
-                Vector3f dir = Vector3f(-x, y, 1).normalized();
+                // float x = (2 * (i + 0.5) / (float)scene.width - 1) *
+                //         imageAspectRatio * scale;
+                // float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
+
+                //Vector3f dir = Vector3f(-x, y, 1).normalized();
+
+                // MSAA抗锯齿
+                int num = std::ceil(sqrt(spp));
+                float invNum = 1.f / num;
+                float invNumHalf = invNum * 0.5f;
+
                 for (int k = 0; k < spp; k++){
+                    float screen_i = i + invNumHalf + invNum * (k % num);
+                    float screen_j = j + invNumHalf + invNum * (k / num);
+                    // 从屏幕像素坐标转换到[-1，1]再转换为相机坐标系下的坐标
+                    float x = ((2 * screen_i / (float)scene.width) - 1) *
+                            imageAspectRatio * scale;
+                    float y = (1 - (2 * screen_j / (float)scene.height)) * scale;
+                    // 因为认为相机的始终朝向z轴，因此无论相机在哪个位置，dir都可以按照相机在原点计算，即在相机坐标系下计算（如果相机朝向不是这样，那dir可能要进行坐标系转换，从相机坐标系转换到世界坐标系）
+                    Vector3f dir = normalize(Vector3f(-x, y, 1));
+
                     if(isBasic){
                         framebuffer[(int)(j * scene.width + i)] += scene.castRayBasic(Ray(eye_pos, dir)) / spp; // whitted-style tracing
                     }else{
                         framebuffer[(int)(j * scene.width + i)] += scene.castRayPT(Ray(eye_pos, dir)) / spp; // path tracing
                     }
                 }
-
-                // MSAA抗锯齿, 这样做图片中心会有一条黑线，原因？。可以采用get_random_float()的方法抗锯齿
-                // int num = sqrt(spp);
-                // float invNum = 1.f / num;
-                // for(int k = 0; k < spp; k++){
-                //     float screen_x = i + 2 * invNum + invNum * (k % num);
-                //     float screen_y = j + 2 * invNum + invNum * (k / num);
-                //     float x = (2 * screen_x / (float)scene.width - 1) *
-                //             imageAspectRatio * scale;
-                //     float y = (1 - 2 * screen_y / (float)scene.height) * scale;
-                //     Vector3f dir = normalize(Vector3f(-x, y, 1));
-                //     framebuffer[(int)(j * scene.width + i)] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
-                // }
             }
 
             mtx.lock(); // 一行渲染完成后更新进度条
@@ -77,10 +83,10 @@ void Renderer::Render(const Scene& scene)
     };
 
     // 给线程分配任务
-    for(int i = 0; i < thread_num; i++){
+    for(int i = 0; i < thread_num; ++i){
         threads[i] = std::thread(renderEachRow, i);
     }
-    for(int i = 0; i < thread_num; i++){
+    for(int i = 0; i < thread_num; ++i){
         threads[i].join();
     }
     

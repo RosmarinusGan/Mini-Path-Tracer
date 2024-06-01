@@ -65,7 +65,7 @@ Vector3f Scene::castRayPT(const Ray &ray) const
     //inter.distance -= 200.f;
     //std::cout << dis << std::endl;
     //hitMedium = dis < 3.f;
-    //hitMedium = false; // 关闭体积光
+    hitMedium = false; // 关闭体积光
     /* volumetric */
     
     if(!inter.happened) return this->backgroundColor; // 背景色
@@ -210,7 +210,6 @@ Vector3f Scene::castRayPT(const Ray &ray) const
             /* volumetric */
         };
 
-        //if(!traceInter.happened) L_indir = backgroundColor; // 错误
         if(!traceInter.happened) 
             L_indir = backgroundColor; // 如果没有交点，意味着色点没有收到间接光照(是0还是背景色？)
             // L_indir = 0.f;

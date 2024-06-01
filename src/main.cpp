@@ -67,7 +67,7 @@ int main(int argc, char** argv)
     MeshTriangle shortbox("../models/cornellbox/shortbox.obj", diffuse.get());
     //MeshTriangle shortbox("../models/cornellbox/shortbox.obj", white, Vector3f(260, 0, 0), Vector3f(0.7f, 0.7f, 0.7f));
     //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glossy.get());
-    MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glossy.get());
+    MeshTriangle tallbox("../models/cornellbox/tallbox.obj", diffuse.get());
     //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glass.get());
     MeshTriangle left("../models/cornellbox/left.obj", red.get());
     MeshTriangle right("../models/cornellbox/right.obj", green.get());
