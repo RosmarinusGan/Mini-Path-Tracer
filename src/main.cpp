@@ -40,6 +40,7 @@ int main(int argc, char** argv)
     std::unique_ptr<Material> light = std::make_unique<Diffuse>(Vector3f(0.65f), (8.0f * Vector3f(0.747f+0.058f, 0.747f+0.258f, 0.747f) + 15.6f * Vector3f(0.740f+0.287f,0.740f+0.160f,0.740f) + 18.4f *Vector3f(0.737f+0.642f,0.737f+0.159f,0.737f)));
     
     std::unique_ptr<Material> glass = std::make_unique<Mirror>(30.0f); // 完美镜面反射
+    glass->Kd = Vector3f(1.f);
     // Material* glass_classic = new Material(MIRROR);
     // glass_classic->ior = 30.0f;
 
@@ -51,7 +52,7 @@ int main(int argc, char** argv)
     std::unique_ptr<Material> glossy = std::make_unique<Microfacet>(Vector3f(0.725f, 0.71f, 0.68f), 0.7f);
     glossy->ior = 12.85f;
 
-    std::unique_ptr<Material> mirror = std::make_unique<Microfacet>(Vector3f(1.0f), 0.001f); // 还是不能取0，对完美镜面的采样似乎还是有问题
+    std::unique_ptr<Material> mirror = std::make_unique<Microfacet>(Vector3f(1.0f), 0.f); // 无法输入0.f，完全镜面好像有点问题
     std::unique_ptr<Material> diffuse_cow = std::make_unique<Microfacet>();
     diffuse_cow->setTexture("../models/spot/spot_texture.png");
     //diffuse_cow->setTexture("../models/rock/rock.png");
@@ -64,10 +65,12 @@ int main(int argc, char** argv)
     std::unique_ptr<Material> transparent = std::make_unique<Transparent>(10.f, Vector3f(0.7937, 0.7937, 0.7937)); // ior 不能等于1,否则进入死循环运算
 
     MeshTriangle floor("../models/cornellbox/floor.obj", white.get());
-    MeshTriangle shortbox("../models/cornellbox/shortbox.obj", diffuse.get());
+    //MeshTriangle shortbox("../models/cornellbox/shortbox.obj", diffuse.get());
+    MeshTriangle shortbox("../models/cornellbox/shortbox.obj", white.get());
     //MeshTriangle shortbox("../models/cornellbox/shortbox.obj", white, Vector3f(260, 0, 0), Vector3f(0.7f, 0.7f, 0.7f));
     //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glossy.get());
-    MeshTriangle tallbox("../models/cornellbox/tallbox.obj", diffuse.get());
+    //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", diffuse.get());
+    MeshTriangle tallbox("../models/cornellbox/tallbox.obj", mirror.get());
     //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glass.get());
     MeshTriangle left("../models/cornellbox/left.obj", red.get());
     MeshTriangle right("../models/cornellbox/right.obj", green.get());

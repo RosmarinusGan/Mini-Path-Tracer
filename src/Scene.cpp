@@ -158,24 +158,7 @@ Vector3f Scene::castRayPT(const Ray &ray) const
         //L_dir = medium->Tr(dis_shadeToLight) * L_dir; // 这段要不要乘上Tr？似乎不用，因为最后结果乘了coeff
         /* volumetric */
     };
-
-    if(!hitMedium){
-        switch(inter.m->getType()){
-            case MIRROR:
-            {
-                L_dir = 0.f; // 因为完全镜面反射只对一个方向采样，就不单独考虑直接光照，而是一并在间接光照中计算
-                break; 
-            }
-
-            default:
-            {
-                compute_direct();
-                break;
-            }
-        }
-    }else{
-        compute_direct();
-    }
+    compute_direct();
     
     // 间接光照
     Vector3f L_indir = 0.f;
@@ -199,8 +182,11 @@ Vector3f Scene::castRayPT(const Ray &ray) const
                 auto inputPdf = inter.m->pdf(wi, wo, n);
                 // 入射光在半球内,否则当pdf接近0时，会出现白色噪点
                 // 这是合理的，因为像素收敛是正确的，但采样数不够，根据能量守恒，为了弥补未采样到的点，会出现高亮白色噪点（firefly），本质是采样数不够
-                if(inputPdf > EPSILON)
+                //if(inputPdf > EPSILON)
+                // 防止除0，而且当pdf等于0时，说明方向超出了半球范围，不应该计算
+                if(inputPdf > 0.f){
                     L_indir = castRayPT(traceRay) * fr * costheta / (inputPdf * RussianRoulette);
+                }
             }else{
                 auto fp = medium->pf->eval(wi, wo);
                 auto inputPdf = medium->pf->pdf(wi, wo);
@@ -213,33 +199,9 @@ Vector3f Scene::castRayPT(const Ray &ray) const
         if(!traceInter.happened) 
             L_indir = backgroundColor; // 如果没有交点，意味着色点没有收到间接光照(是0还是背景色？)
             // L_indir = 0.f;
-        else{
-            /* volumetric */
-            if(!hitMedium){
-                switch (inter.m->getType()){
-                    case MIRROR:
-                    {
-                        compute_indirect();
-                        break;
-                    }
-
-                    default:
-                    {
-                        if(!traceInter.m->hasEmission()){
-                            compute_indirect();
-                        }
-                        break;
-                    }
-                }
-            }else{
-                if(!traceInter.m->hasEmission()){
-                    compute_indirect();
-                }
-                // L_dir = 0.f;
-                // compute_indirect();
+        else if(!traceInter.m->hasEmission()){
+                compute_indirect();
             }
-            /* volumetric */
-        }
     }
 
     //return L_dir + L_indir;
@@ -269,6 +231,7 @@ Vector3f Scene::castRayPT(const Ray &ray) const
     // 光线打到光源直接返回
     if(inter.m->hasEmission()) return inter.m->getEmission();
     // 光线打到diffuse物体返回blinn-phong着色
+    // 微表面当作diffuse处理
     if(inter.m->getType() == DIFFUSE || inter.m->getType() == MICROFACET){
         // 对每个光源都计算贡献
         for (uint32_t k = 0; k < objects.size(); ++k){
@@ -293,7 +256,7 @@ Vector3f Scene::castRayPT(const Ray &ray) const
                 }
             }
         }
-        return hitColor;
+        return hitColor + La;
     }
 
     float ksi = get_random_float();

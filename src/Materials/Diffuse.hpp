@@ -52,15 +52,16 @@ float Diffuse::pdf(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
     // else
     //     return 0.0f;
     // break;
-    if(dotProduct(wi, N) > 0.0f)
+    if(dotProduct(wi, N) > 0.0f && dotProduct(wo, N) > 0.0f)
         return dotProduct(wi, N) / M_PI;
     else 
         return 0.0f;
 }
 
 Vector3f Diffuse::eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N, const Vector2f &tcoord){
-    float cosalpha = dotProduct(N, wi);
-    if (cosalpha > 0.0f) {
+    float cosalpha_i = dotProduct(N, wi);
+    float cosalpha_o = dotProduct(N, wo);
+    if (cosalpha_i > 0.0f && cosalpha_o > 0.0f) {
         // Vector3f diffuse = Kd / M_PI;
         Vector3f diffuse = getColorAt(tcoord.x, tcoord.y) / M_PI;
         return diffuse;

@@ -19,11 +19,11 @@ public:
     double fov = 40;
     //Vector3f backgroundColor = Vector3f(0.235294, 0.67451, 0.843137);
     Vector3f backgroundColor = 0.f;
-    Vector3f La = Vector3f(0.05f, 0.05f, 0.05f);
+    Vector3f La = Vector3f(0.1f, 0.1f, 0.1f);
     float RussianRoulette = 0.8; // RR概率
     
     std::unique_ptr<PhaseFunction> phase = std::make_unique<HenyeyGreensteinMedium>(0.7f);
-    std::unique_ptr<Medium> medium = std::make_unique<HomoMedium>(0.00008f, 0.0003f, phase.get());
+    std::unique_ptr<Medium> medium = std::make_unique<HomoMedium>(0.00025f, 0.0003f, phase.get());
 
     Scene(int w, int h) : width(w), height(h) {}
 

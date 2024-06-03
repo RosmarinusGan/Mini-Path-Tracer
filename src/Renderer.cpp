@@ -24,10 +24,10 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 256; // 每个pixel路径数
+    int spp = 128; // 每个pixel路径数
     std::cout << "SPP: " << spp << "\n";
 
-    int thread_num = 8; // 线程数
+    int thread_num = 6; // 线程数
     int thread_height = scene.height / thread_num; // 每个线程处理的高度/行数
     std::vector<std::thread> threads(thread_num);
     std::mutex mtx;
@@ -98,7 +98,7 @@ void Renderer::Render(const Scene& scene)
     for (auto i = 0; i < scene.height * scene.width; ++i) {
         static unsigned char color[3];
         // gamma correction
-        framebuffer[i] = pow(framebuffer[i], 1 / GAMMA_C); 
+        //framebuffer[i] = pow(framebuffer[i], 1 / GAMMA_C); 
         
         color[0] = (unsigned char)(255 * std::pow(clamp(0, 1, framebuffer[i].x), 0.6f));
         color[1] = (unsigned char)(255 * std::pow(clamp(0, 1, framebuffer[i].y), 0.6f));
