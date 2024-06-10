@@ -47,50 +47,54 @@ int main(int argc, char** argv)
     std::unique_ptr<Material> green_m = std::make_unique<Microfacet>(Vector3f(0.14f, 0.45f, 0.091f));
     std::unique_ptr<Material> red_m = std::make_unique<Microfacet>(Vector3f(0.63f, 0.065f, 0.05f));
 
-    std::unique_ptr<Material> diffuse = std::make_unique<Microfacet>();
+    std::unique_ptr<Material> diffuse = std::make_unique<Microfacet>(Vector3f(0.725f, 0.71f, 0.68f));
     diffuse->ior = 12.85f;
-    std::unique_ptr<Material> glossy = std::make_unique<Microfacet>(Vector3f(0.725f, 0.71f, 0.68f), 0.7f);
+    std::unique_ptr<Material> glossy = std::make_unique<Microfacet>(Vector3f(0.725f, 0.71f, 0.68f), 0.35f);
     glossy->ior = 12.85f;
 
     std::unique_ptr<Material> mirror = std::make_unique<Microfacet>(Vector3f(1.0f), 0.f); // 无法输入0.f，完全镜面好像有点问题
     std::unique_ptr<Material> diffuse_cow = std::make_unique<Microfacet>();
     diffuse_cow->setTexture("../models/spot/spot_texture.png");
     //diffuse_cow->setTexture("../models/rock/rock.png");
-    //diffuse_cow->setTexture("../models/Crate/crate_1.jpg");
     diffuse_cow->ior = 12.85f;
+    std::unique_ptr<Material> diffuse_crate = std::make_unique<Microfacet>();
+    diffuse_crate->setTexture("../models/Crate/crate_1.jpg");
+    diffuse_crate->ior = 12.85f;
 
     std::unique_ptr<Material> emission = std::make_unique<Diffuse>(Vector3f(1.f), Vector3f(63.f, 65.f, 50.f));
 
     // only for Whitted-Sytle
-    std::unique_ptr<Material> transparent = std::make_unique<Transparent>(10.f, Vector3f(0.7937, 0.7937, 0.7937)); // ior 不能等于1,否则进入死循环运算
+    std::unique_ptr<Material> transparent = std::make_unique<Transparent>(0.98f, Vector3f(0.7937, 0.7937, 0.7937)); // ior 不能等于1,否则进入死循环运算
+    transparent->Kd = Vector3f(1.f);
 
     MeshTriangle floor("../models/cornellbox/floor.obj", white.get());
     //MeshTriangle shortbox("../models/cornellbox/shortbox.obj", diffuse.get());
     MeshTriangle shortbox("../models/cornellbox/shortbox.obj", white.get());
     //MeshTriangle shortbox("../models/cornellbox/shortbox.obj", white, Vector3f(260, 0, 0), Vector3f(0.7f, 0.7f, 0.7f));
     //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glossy.get());
-    //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", diffuse.get());
-    MeshTriangle tallbox("../models/cornellbox/tallbox.obj", mirror.get());
+    MeshTriangle tallbox("../models/cornellbox/tallbox.obj", white.get());
+    //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", mirror.get());
     //MeshTriangle tallbox("../models/cornellbox/tallbox.obj", glass.get());
     MeshTriangle left("../models/cornellbox/left.obj", red.get());
     MeshTriangle right("../models/cornellbox/right.obj", green.get());
 
     MeshTriangle light_("../models/cornellbox/light.obj", light.get());
 
-    MeshTriangle bunny("../models/bunny/bunny.obj", mirror.get(), Vector3f(130, -60, 150), 
-        Vector3f(1500, 1500, 1500), Vector3f(-1, 0, 0), Vector3f(0, 1, 0), Vector3f(0, 0, -1));
-    MeshTriangle teapot("../models/teapot.obj", red.get(), Vector3f(200, 100, -50), 
-        Vector3f(55, 55, 55));
-    MeshTriangle sphere1("../models/sphere.obj", white.get(), Vector3f(130, 100, 100), Vector3f(80.f));
+    MeshTriangle bunny("../models/bunny/bunny.obj", white.get(), Vector3f(400, 150, 50), 
+        Vector3f(800, 800, 800), Vector3f(-1, 0, 0), Vector3f(0, 1, 0), Vector3f(0, 0, -1)); // 模型全黑，可能是读三角形时旋转的时候法线问题
+    MeshTriangle teapot("../models/teapot.obj", red.get(), Vector3f(200, 165, 150), 
+        Vector3f(50, 50, 50));
+    MeshTriangle sphere1("../models/sphere.obj", transparent.get(), Vector3f(300, 150, 70), Vector3f(80.f));
 
-    //MeshTriangle sphere2("../models/sphere.obj", mirror.get(), Vector3f(380, 100, 350), Vector3f(80.f));
-    MeshTriangle sphere2("../models/sphere.obj", transparent.get(), Vector3f(380, 100, 350), Vector3f(80.f));
+    MeshTriangle sphere2("../models/sphere.obj", glass.get(), Vector3f(400, 100, 330), Vector3f(80.f));
+    //MeshTriangle sphere2("../models/sphere.obj", transparent.get(), Vector3f(380, 100, 350), Vector3f(80.f));
 
-    MeshTriangle cow("../models/spot/spot_triangulated_good.obj", diffuse_cow.get(), Vector3f(300, 250, 200), Vector3f(50.f));
+    MeshTriangle cow("../models/spot/spot_triangulated_good.obj", diffuse_cow.get(), Vector3f(370, 30, 150), Vector3f(60.f));
     MeshTriangle rock("../models/rock/rock.obj", diffuse_cow.get(), Vector3f(300, 250, 200), Vector3f(50.f));
-    MeshTriangle crate("../models/Crate/Crate1.obj", diffuse_cow.get(), Vector3f(300, 300, 50), Vector3f(70.f));
+    MeshTriangle crate("../models/Crate/Crate1.obj", diffuse_crate.get(), Vector3f(280, 250, 40), Vector3f(70.f)); // 纹理映射好像有点问题
 
     MeshTriangle sphereLight("../models/sphere.obj", light.get(), Vector3f(300.f, 200.f, -800.f), Vector3f(10.f));
+    //MeshTriangle testObj("../models/TestObj.obj", diffuse.get()); // 还没法用，文件中包含多个mesh，现在读三角形的时候只能处理一个，待扩展
 
     scene.Add(&floor);
     scene.Add(&shortbox);
@@ -106,6 +110,7 @@ int main(int argc, char** argv)
     //scene.Add(&rock);
     //scene.Add(&crate);
     //scene.Add(&sphereLight);
+    //scene.Add(&testObj);
 
     scene.buildBVH();
 

@@ -224,7 +224,11 @@ Vector3f Scene::castRayPT(const Ray &ray) const
     auto wo = -ray.direction; // 视线方向
     Vector3f pos_deviation = (dotProduct(ray.direction, n) < 0) ?
                         pos + n * EPSILON :
-                        pos - n * EPSILON ; // 着色点位置偏移
+                        pos - n * EPSILON ; // 反射着色点位置偏移
+    Vector3f refract_pos_deviation = (dotProduct(ray.direction, n) < 0) ?
+                        pos - n * EPSILON :
+                        pos + n * EPSILON ; // 折射着色点位置偏移
+    // 这里一定要区别，否则折射会出问题
 
     Vector3f hitColor = 0.f;
 
@@ -269,16 +273,16 @@ Vector3f Scene::castRayPT(const Ray &ray) const
             return hitColor * inter.m->pdf(reflectDir, wo, n);
         }
 
+        Vector3f reflectColor = 0.f, refractColor = 0.f;
         if(inter.m->getType() == TRANSPARENT){
-            Vector3f reflectColor = 0.f, refractColor = 0.f;
             // 计算反射
             reflectColor = castRayBasic(Ray(pos_deviation, reflectDir));
             // 计算折射
-            refractColor = castRayBasic(Ray(pos_deviation, refractDir));
+            refractColor = castRayBasic(Ray(refract_pos_deviation, refractDir));
             // Fresnel
             float kr = inter.m->pdf(reflectDir, wo, n);
             hitColor = reflectColor * kr + refractColor * (1 - kr);
-            return hitColor;
+            //hitColor = refractColor;
         }
     }
 

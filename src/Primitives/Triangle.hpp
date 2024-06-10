@@ -72,8 +72,10 @@ inline Intersection Triangle::getIntersection(Ray ray)
 {
     Intersection inter;
 
-    if (dotProduct(ray.direction, normal) > 0)
-        return inter;
+    // 背向光线的交点
+    // 但是对于basic ray tracing，因为折射我们需要计算背向光线的交点
+    // if (dotProduct(ray.direction, normal) > 0)
+    //     return inter;
     float u, v, t_tmp = 0;
     Vector3f pvec = crossProduct(ray.direction, e2);
     float det = dotProduct(e1, pvec);
@@ -90,6 +92,8 @@ inline Intersection Triangle::getIntersection(Ray ray)
     if (v < 0 || u + v > 1)
         return inter;
     t_tmp = dotProduct(e2, qvec) * det_inv;
+
+    if(t_tmp < 0) return inter; // 如果不进行方向与法线的判断，即考虑背向光线的交点，但是一定要去除t小于0的情况
 
     // TODO find ray triangle intersection
     // u, v重心坐标

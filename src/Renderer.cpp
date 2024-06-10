@@ -24,10 +24,10 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 128; // 每个pixel路径数
+    int spp = 256; // 每个pixel路径数
     std::cout << "SPP: " << spp << "\n";
 
-    int thread_num = 6; // 线程数
+    int thread_num = 8; // 线程数
     int thread_height = scene.height / thread_num; // 每个线程处理的高度/行数
     std::vector<std::thread> threads(thread_num);
     std::mutex mtx;
@@ -61,10 +61,13 @@ void Renderer::Render(const Scene& scene)
                     float screen_i = i + invNumHalf + invNum * (k % num);
                     float screen_j = j + invNumHalf + invNum * (k / num);
                     // 从屏幕像素坐标转换到[-1，1]再转换为相机坐标系下的坐标
-                    float x = ((2 * screen_i / (float)scene.width) - 1) *
-                            imageAspectRatio * scale;
-                    float y = (1 - (2 * screen_j / (float)scene.height)) * scale;
+                    // float x = ((2 * screen_i / (float)scene.width) - 1) *
+                    //         imageAspectRatio * scale;
+                    // float y = (1 - (2 * screen_j / (float)scene.height)) * scale;
                     // 因为认为相机的始终朝向z轴，因此无论相机在哪个位置，dir都可以按照相机在原点计算，即在相机坐标系下计算（如果相机朝向不是这样，那dir可能要进行坐标系转换，从相机坐标系转换到世界坐标系）
+                    float x = (2 * (i + 0.5) / (float)scene.width - 1) *
+                            imageAspectRatio * scale;
+                    float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
                     Vector3f dir = normalize(Vector3f(-x, y, 1));
 
                     if(isBasic){

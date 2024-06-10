@@ -97,8 +97,8 @@ public:
     // 输入wo出射方向（朝外），获得反射方向reflect和折射方向refract(朝外)
     inline void getReflectRefract(const Vector3f &wo,const Vector3f &N, Vector3f &reflect, Vector3f &refract)
     {
-        reflect = -this->reflect(wo, N);
-        refract = this->refract(-wo, N, ior);
+        reflect = -this->reflect(wo, N).normalized();
+        refract = this->refract(-wo, N, ior).normalized();
     }
 
     // sample a ray by Material properties
